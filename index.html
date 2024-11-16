@@ -3,15 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APP VERIFICACION EN SITO</title>
-    
+    <title>APP VERIFICACION EN SITIO</title>
     <style>
         html, body {
             margin: 0;
             padding: 0;
             height: 100%;
-            overflow: hidden;
+            font-family: Arial, sans-serif;
         }
+
+        #menu {
+            display: flex;
+            justify-content: center;
+            background-color: #f4f4f4;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #menu button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background-color: #f4f4f4;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        #menu button.active {
+            background-color: #ddd;
+            font-weight: bold;
+        }
+
+        #menu button:hover {
+            background-color: #e0e0e0;
+        }
+
+        #content {
+            height: calc(100% - 50px); /* Ajustar para que ocupe el espacio restante debajo del menú */
+        }
+
         iframe {
             width: 100%;
             height: 100%;
@@ -20,61 +50,39 @@
     </style>
 </head>
 <body>
+    <!-- Menú de pestañas -->
+    <div id="menu">
+        <button id="formTab" class="active" onclick="showTab('form')">Formulario</button>
+        <button id="dbTab" onclick="showTab('db')">Base de Datos</button>
+    </div>
+
+    <!-- Contenido de pestañas -->
+    <div id="content">
+        <iframe id="form" 
+                src="https://script.google.com/macros/s/AKfycbyq5QuSJm_QR1R0IlJX0XmLWpjgNhONdVG3NG1QnHYxHoCSkUJ9YSPcqHGxBYU1V8BK/exec" 
+                allow="geolocation">
+        </iframe>
+        <iframe id="db" 
+                src="https://script.google.com/macros/s/AKfycbx4NZACBmz1dcWPl3K-3XZlNjR1fA3smaycBuMDcLaKPsHA6cTTjEoAWSfXpHdxRHFp/exec" 
+                style="display: none;">
+        </iframe>
+    </div>
+
     <script>
-        // Función para obtener la geolocalización
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
-            } else {
-                alert("Geolocalización no es soportada por este navegador.");
-            }
+        // Función para mostrar la pestaña seleccionada
+        function showTab(tab) {
+            // Ocultar ambos iframes
+            document.getElementById('form').style.display = 'none';
+            document.getElementById('db').style.display = 'none';
+
+            // Quitar clase "active" de todos los botones
+            document.getElementById('formTab').classList.remove('active');
+            document.getElementById('dbTab').classList.remove('active');
+
+            // Mostrar el iframe correspondiente y agregar clase "active" al botón
+            document.getElementById(tab).style.display = 'block';
+            document.getElementById(tab + 'Tab').classList.add('active');
         }
-
-        function showPosition(position) {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            // Enviar los datos de geolocalización al iframe
-            const iframe = document.querySelector('iframe');
-            iframe.contentWindow.postMessage({latitude: lat, longitude: lon}, '*');
-        }
-
-        function showError(error) {
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    alert("Permiso denegado para obtener la geolocalización.");
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    alert("La información de la ubicación no está disponible.");
-                    break;
-                case error.TIMEOUT:
-                    alert("La solicitud para obtener la ubicación ha expirado.");
-                    break;
-                case error.UNKNOWN_ERROR:
-                    alert("Se ha producido un error desconocido.");
-                    break;
-            }
-        }
-
-        // Llamar a la función de geolocalización al cargar la página
-        window.onload = getLocation;
-
-        // Escuchar mensajes desde el iframe (opcional)
-        window.addEventListener('message', function(event) {
-            if (event.origin === 'https://tu-dominio.com') { // Cambia esto por el dominio de tu iframe
-                console.log('Mensaje recibido del iframe:', event.data);
-            }
-        }, false);
     </script>
-
-
-
-<iframe 
-    src="https://script.google.com/macros/s/AKfycbyq5QuSJm_QR1R0IlJX0XmLWpjgNhONdVG3NG1QnHYxHoCSkUJ9YSPcqHGxBYU1V8BK/exec"
-    allow="geolocation"
-    style="width: 100%; height: 100%; border: none;">
-</iframe>
-
-
-
 </body>
 </html>
